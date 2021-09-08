@@ -48,7 +48,7 @@ module "resource_group" {
 
 resource "azurerm_storage_account" "storage_account" {
 
-  name                     = try("${var.admin.name}hpccsa${random_integer.random.result}", "hpccsa${random_integer.random.result}404")
+  name                     = try("${var.admin.name}${var.metadata.product_name}sa", "${var.metadata.product_name}sa")
   resource_group_name      = module.resource_group.name
   location                 = module.resource_group.location
   account_tier             = var.storage.account_tier
