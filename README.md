@@ -56,7 +56,7 @@ The following options should be set in your `terraform.tfvars` file (or entered 
 
 |Option|Type|Description|
 |:-----|:---|:----------|
-| `product_name` | string | Abbreviated product name, suitable for use in Azure naming. Must be 2-24 characters in length, all lowercase, no spaces, only dashes for punctuation. Because this name will appear in the Azure portal, you may want to consider including the word 'data' or 'storage' somewhere in the name. |
+| `product_name` | string | Abbreviated product name, suitable for use in Azure naming. Must be 3-16 characters in length, all lowercase letters or numbers, no spaces Because this name will appear in the Azure portal, you may want to consider including the word 'data' or 'storage' somewhere in the name. |
 | `azure_region` | string  | The Azure region abbreviation in which to create these resources. Must be one of ["eastus2", "centralus"]. |
 | `admin_email` | string  | Email address of the administrator of this storage account. |
 | `admin_name` | string  | Name of the administrator of this storage account. |

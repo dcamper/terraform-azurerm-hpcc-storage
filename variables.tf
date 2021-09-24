@@ -8,7 +8,7 @@ variable "product_name" {
   description = "REQUIRED.  Abbreviated product name, suitable for use in Azure naming.\nMust be 2-24 characters in length, all lowercase, no spaces, only dashes for punctuation.\nExample entry: my-product"
   validation {
     condition     = length(regexall("^[a-z][a-z0-9\\-]{1,23}$", var.product_name)) == 1
-    error_message = "Value must be 2-24 characters in length, all lowercase, no spaces, only dashes for punctuation."
+    error_message = "Value must be 3-16 characters in length, all lowercase letters or numbers, no spaces."
   }
 }
 
