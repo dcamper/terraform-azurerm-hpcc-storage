@@ -1,8 +1,3 @@
-resource "random_integer" "random" {
-  min = 1
-  max = 3
-}
-
 resource "random_string" "random" {
   length  = 43
   upper   = false
@@ -24,41 +19,41 @@ module "metadata" {
 
   naming_rules = module.naming.yaml
 
-  market              = var.metadata.market
-  location            = var.resource_group.location
-  sre_team            = var.metadata.sre_team
-  environment         = var.metadata.environment
-  product_name        = var.metadata.product_name
-  business_unit       = var.metadata.business_unit
-  product_group       = var.metadata.product_group
-  subscription_type   = var.metadata.subscription_type
-  resource_group_type = var.metadata.resource_group_type
+  market              = local.metadata.market
+  location            = var.azure_region
+  sre_team            = local.metadata.sre_team
+  environment         = local.metadata.environment
+  product_name        = local.metadata.product_name
+  business_unit       = local.metadata.business_unit
+  product_group       = local.metadata.product_group
+  subscription_type   = local.metadata.subscription_type
+  resource_group_type = local.metadata.resource_group_type
   subscription_id     = data.azurerm_subscription.current.id
-  project             = var.metadata.project
+  project             = local.metadata.project
 }
 
 module "resource_group" {
   source = "github.com/Azure-Terraform/terraform-azurerm-resource-group.git?ref=v2.0.0"
 
-  unique_name = var.resource_group.unique_name
-  location    = var.resource_group.location
+  unique_name = false
+  location    = var.azure_region
   names       = local.names
   tags        = local.tags
 }
 
 resource "azurerm_storage_account" "storage_account" {
 
-  name                     = try("${var.admin.name}${var.metadata.product_name}sa", "${var.metadata.product_name}sa")
+  name                     = "${var.admin_username}${local.metadata.product_name}sa"
   resource_group_name      = module.resource_group.name
   location                 = module.resource_group.location
-  account_tier             = var.storage.account_tier
-  account_replication_type = var.storage.account_replication_type
+  account_tier             = local.storage.account_tier
+  account_replication_type = local.storage.account_replication_type
   min_tls_version          = "TLS1_2"
   tags                     = local.tags
 }
 
 resource "azurerm_storage_share" "storage_shares" {
-  for_each = local.storage_shares
+  for_each = local.storage.quotas
 
   name                 = each.key
   storage_account_name = azurerm_storage_account.storage_account.name

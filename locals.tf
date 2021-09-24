@@ -1,19 +1,42 @@
 locals {
-  names = var.disable_naming_conventions ? merge(
-    {
-      business_unit     = var.metadata.business_unit
-      environment       = var.metadata.environment
-      location          = var.storage.location
-      market            = var.metadata.market
-      subscription_type = var.metadata.subscription_type
-    },
-    var.metadata.product_group != "" ? { product_group = var.metadata.product_group } : {},
-    var.metadata.product_name != "" ? { product_name = var.metadata.product_name } : {},
-    var.metadata.resource_group_type != "" ? { resource_group_type = var.metadata.resource_group_type } : {}
-  ) : module.metadata.names
+  metadata = {
+    project             = "hpcc_k8s_sa"
+    product_name        = var.product_name
+    business_unit       = "infra"
+    environment         = "sandbox"
+    market              = "us"
+    product_group       = "solutionslab"
+    resource_group_type = "shared"
+    sre_team            = "solutionslab"
+    subscription_type   = "dev"
+  }
 
-  tags = var.disable_naming_conventions ? merge(var.tags, { "admin" = var.admin.name, "email" = var.admin.email, "workspace" = terraform.workspace }) : merge(module.metadata.tags, { "admin" = var.admin.name, "email" = var.admin.email, "workspace" = terraform.workspace }, try(var.tags))
+  names = module.metadata.names
 
-  storage_shares = { "dalishare" = var.storage.quotas.dali, "dllsshare" = var.storage.quotas.dll, "sashashare" = var.storage.quotas.sasha,
-  "datashare" = var.storage.quotas.data, "lzshare" = var.storage.quotas.lz }
+  #----------------------------------------------------------------------------
+
+  enforced_tags = {
+    "admin" = var.admin_name
+    "email" = var.admin_email
+    "owner" = var.admin_name
+    "owner_email" = var.admin_email
+  }
+  tags = merge(module.metadata.tags, local.enforced_tags, try(var.extra_tags, {}))
+
+  #----------------------------------------------------------------------------
+
+  storage = {
+    access_tier              = "Hot"
+    account_kind             = "StorageV2"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
+
+    quotas = {
+      "dalishare" = 3,
+      "dllsshare" = 2,
+      "sashashare" = 2,
+      "datashare" = 5,
+      "lzshare" = 3
+    }
+  }
 }

@@ -1,39 +1,50 @@
-variable "admin" {
-  description = "Information for the user who administers the deployment."
-  type = object({
-    name  = string
-    email = string
-  })
-}
+###############################################################################
+# Prompted variables (user will be asked to supply them at plan/apply time
+# if a .tfvars file is not supplied); there are no default values
+###############################################################################
 
-variable "disable_naming_conventions" {
-  description = "Naming convention module."
-  type        = bool
-  default     = false
-}
-
-variable "metadata" {
-  description = "Names"
-  type        = map(string)
-}
-
-variable "resource_group" {
-  description = "Resource group module variables."
-  type        = any
-
-  default = {
-    unique_name = true
-    location    = null
+variable "product_name" {
+  type        = string
+  description = "REQUIRED.  Abbreviated product name, suitable for use in Azure naming.\nMust be 2-24 characters in length, all lowercase, no spaces, only dashes for punctuation.\nExample entry: my-product"
+  validation {
+    condition     = length(regexall("^[a-z][a-z0-9\\-]{1,23}$", var.product_name)) == 1
+    error_message = "Value must be 2-24 characters in length, all lowercase, no spaces, only dashes for punctuation."
   }
 }
 
-variable "storage" {
-  description = "HPCC Helm chart variables."
-  type        = any
-  default     = { default = {} }
+variable "azure_region" {
+  type        = string
+  description = "REQUIRED.  The Azure region abbreviation in which to create these resources.\nMust be one of [\"eastus2\", \"centralus\"].\nExample entry: eastus2"
+  validation {
+    condition     = contains(["eastus2", "centralus"], var.azure_region)
+    error_message = "Value must be one of [\"eastus2\", \"centralus\"]."
+  }
 }
 
-variable "tags" {
-  description = "Tags"
+variable "admin_email" {
+  type        = string
+  description = "REQUIRED.  Email address of the administrator of this HPCC Systems cluster.\nExample entry: jane.doe@hpccsystems.com"
+  validation {
+    condition     = length(regexall("^[^@]+@[^@]+$", var.admin_email)) > 0
+    error_message = "Value must at least look like a valid email address."
+  }
+}
+
+variable "admin_name" {
+  type        = string
+  description = "REQUIRED.  Name of the administrator of this HPCC Systems cluster.\nExample entry: Jane Doe"
+}
+
+variable "admin_username" {
+  type        = string
+  description = "REQUIRED.  Username of the administrator of this HPCC Systems cluster.\nExample entry: jdoe"
+  validation {
+    condition     = length(var.admin_username) > 1 && length(regexall(" ", var.admin_username)) == 0
+    error_message = "Value must at least two characters in length and contain no spaces."
+  }
+}
+
+variable "extra_tags" {
+  description = "REQUIRED.  Map of name => value tags that can will be associated with the cluster.\nFormat is '{\"name\"=\"value\" [, \"name\"=\"value\"]*}'.\nThe 'name' portion must be unique.\nTo add no tags, enter '{}'."
   type        = map(string)
 }
