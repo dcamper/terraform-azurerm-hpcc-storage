@@ -20,7 +20,7 @@ module "metadata" {
   naming_rules = module.naming.yaml
 
   market              = local.metadata.market
-  location            = var.azure_region
+  location            = lower(var.azure_region)
   sre_team            = local.metadata.sre_team
   environment         = local.metadata.environment
   product_name        = local.metadata.product_name
@@ -36,14 +36,14 @@ module "resource_group" {
   source = "github.com/Azure-Terraform/terraform-azurerm-resource-group.git?ref=v2.0.0"
 
   unique_name = false
-  location    = var.azure_region
+  location    = lower(var.azure_region)
   names       = local.names
   tags        = local.tags
 }
 
 resource "azurerm_storage_account" "storage_account" {
 
-  name                     = "${var.admin_username}${local.metadata.product_name}sa"
+  name                     = lower("${var.admin_username}${local.metadata.product_name}sa")
   resource_group_name      = module.resource_group.name
   location                 = module.resource_group.location
   account_tier             = local.storage.account_tier
