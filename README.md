@@ -26,10 +26,11 @@ This repo is a fork of the excellent work performed by Godson Fortil.  The origi
 	* `git clone https://github.com/dcamper/terraform-azurerm-hpcc-storage.git`
 	* `cd terraform-azurerm-hpcc-storage`
 1. Issue `terraform init` to initialize the Terraform modules.
-1. Decide how you want to supply option values to the module during invocation.  There are two possibilities:
+1. Decide how you want to supply option values to the module during invocation.  There are three possibilities:
 	1. Invoke the `terraform apply` command and enter values for each option as Terraform prompts for it, then enter `yes` at the final prompt to begin building the storage account.
 	1. **Recommended:**  Create a `terraform.tfvars` file containing the values for each option, invoke `terraform apply`, then enter `yes` at the final prompt to begin building the storage account.  The easiest way to do that is to copy the sample file and then edit the copy:
 		* `cp examples/sample.tfvars terraform.tfvars`
+	1. Use -var arguments on the command line when executing the terraform tool to set each of the values found in the .tfvars file.  This method is useful if you are driving the creation of the cluster from a script.
 
 Several items are shown at the end of a successful deployment:
 * The Azure subscription ID under which these resources were created.
