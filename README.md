@@ -45,6 +45,10 @@ Options have data types.  The ones used in this module are:
 	* Typical string enclosed by quotes
 	* Example
 		* `"value"`
+* number
+	* Integer number; do not quote
+	* Example
+		* `1234`
 * map of string
 	* List of key/value pairs, delimited by commas
 	* Both key and value should be a quote string
@@ -62,7 +66,9 @@ The following options should be set in your `terraform.tfvars` file (or entered 
 | `admin_email` | string  | Email address of the administrator of this storage account. |
 | `admin_name` | string  | Name of the administrator of this storage account. |
 | `admin_username` | string  | Username of the administrator of this storage account. |
-| `extra_tags` | map of string  | Map of name => value tags that can will be associated with the storage account. To add no additional tags, use `{}`. This is OPTIONAL and defaults to an empty string map. |
+| `storage_lz_gb` | number  | The amount of storage reserved for the landing zone in gigabytes. Must be 1 or more. ***OPTIONAL, defaults to 10.*** |
+| `storage_data_gb` | number  | The amount of storage reserved for data in gigabytes. Must be 10 or more. ***OPTIONAL, defaults to 500.*** |
+| `extra_tags` | map of string  | Map of name => value tags that can will be associated with the storage account. To add no additional tags, use `{}`. ***OPTIONAL, defaults to an empty string map.*** |
 
 ## Recommendations
 

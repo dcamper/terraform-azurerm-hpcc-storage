@@ -44,6 +44,26 @@ variable "admin_username" {
   }
 }
 
+variable "storage_lz_gb" {
+  type        = number
+  default     = 10
+  description = "OPTIONAL.  The amount of storage reserved for the landing zone in gigabytes.\nMust be 1 or more.\nOPTIONAL, defaults to 10."
+  validation {
+    condition     = var.storage_lz_gb >= 1
+    error_message = "Value must be 1 or more."
+  }
+}
+
+variable "storage_data_gb" {
+  type        = number
+  default     = 500
+  description = "OPTIONAL.  The amount of storage reserved for data in gigabytes.\nMust be 10 or more.\nOPTIONAL, defaults to 500."
+  validation {
+    condition     = var.storage_data_gb >= 10
+    error_message = "Value must be 10 or more."
+  }
+}
+
 variable "extra_tags" {
   description = "OPTIONAL.  Map of name => value tags that can will be associated with the cluster.\nFormat is '{\"name\"=\"value\" [, \"name\"=\"value\"]*}'.\nThe 'name' portion must be unique.\nTo add no tags, enter '{}'."
   type        = map(string)
