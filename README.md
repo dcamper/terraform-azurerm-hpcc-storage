@@ -62,7 +62,7 @@ The following options should be set in your `terraform.tfvars` file (or entered 
 | `admin_email` | string  | Email address of the administrator of this storage account. |
 | `admin_name` | string  | Name of the administrator of this storage account. |
 | `admin_username` | string  | Username of the administrator of this storage account. |
-| `extra_tags` | map of string  | Map of name => value tags that can will be associated with the storage account. To add no additional tags, use `{}`. |
+| `extra_tags` | map of string  | Map of name => value tags that can will be associated with the storage account. To add no additional tags, use `{}`. This is OPTIONAL and defaults to an empty string map. |
 
 ## Recommendations
 
