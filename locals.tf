@@ -32,9 +32,9 @@ locals {
     account_replication_type = "LRS"
 
     quotas = {
-      "dalishare" = 10,
-      "dllsshare" = 10,
-      "sashashare" = 5,
+      "dalishare" = 1000,
+      "dllsshare" = 100,
+      "sashashare" = 50,
       "datashare" = var.storage_data_gb,
       "lzshare" = var.storage_lz_gb
     }
