@@ -31,6 +31,7 @@ This repo is a fork of the excellent work performed by Godson Fortil.  The origi
 	1. **Recommended:**  Create a `terraform.tfvars` file containing the values for each option, invoke `terraform apply`, then enter `yes` at the final prompt to begin building the storage account.  The easiest way to do that is to copy the sample file and then edit the copy:
 		* `cp examples/sample.tfvars terraform.tfvars`
 	1. Use -var arguments on the command line when executing the terraform tool to set each of the values found in the .tfvars file.  This method is useful if you are driving the creation of the cluster from a script.
+1. If you are attaching this Terraform module to an existing storage account, you should run `terraform apply --refresh-only` in order for Terraform to populate the local state file with information about your existing configration.  Afterwards, you should use `terraform plan` to ensure that it makes only the appropriate updates and does not destroy any resources unnecessarily.
 
 Several items are shown at the end of a successful deployment:
 * The Azure subscription ID under which these resources were created.
@@ -49,6 +50,8 @@ Options have data types.  The ones used in this module are:
 	* Integer number; do not quote
 	* Example
 		* `1234`
+* boolean
+	* true or false (not quoted)
 * map of string
 	* List of key/value pairs, delimited by commas
 	* Both key and value should be a quote string
@@ -61,14 +64,16 @@ The following options should be set in your `terraform.tfvars` file (or entered 
 
 |Option|Type|Description|
 |:-----|:---|:----------|
-| `product_name` | string | Abbreviated product name, suitable for use in Azure naming. Must be 2-23 characters in length, all lowercase letters or numbers, no spaces Because this name will appear in the Azure portal, you may want to consider including the word 'data' or 'storage' somewhere in the name. |
-| `azure_region` | string  | The Azure region abbreviation in which to create these resources. Must be one of ["east", "eastus2", "centralus"]. |
 | `admin_email` | string  | Email address of the administrator of this storage account. |
 | `admin_name` | string  | Name of the administrator of this storage account. |
 | `admin_username` | string  | Username of the administrator of this storage account. |
-| `storage_lz_gb` | number  | The amount of storage reserved for the landing zone in gigabytes. Must be 1 or more. ***OPTIONAL, defaults to 10.*** |
-| `storage_data_gb` | number  | The amount of storage reserved for data in gigabytes. Must be 10 or more. ***OPTIONAL, defaults to 500.*** |
+| `azure_region` | string  | The Azure region abbreviation in which to create these resources. Must be one of ["east", "eastus2", "centralus"]. |
+| `enable_premium_storage` | boolean  | If true, premium ($$$) storage will be created for the following storage shares: Dali. ***OPTIONAL, defaults to false.*** |
 | `extra_tags` | map of string  | Map of name => value tags that can will be associated with the storage account. To add no additional tags, use `{}`. ***OPTIONAL, defaults to an empty string map.*** |
+| `product_name` | string | Abbreviated product name, suitable for use in Azure naming. Must be 2-23 characters in length, all lowercase letters or numbers, no spaces Because this name will appear in the Azure portal, you may want to consider including the word 'data' or 'storage' somewhere in the name. |
+| `storage_dali_gb` | number  | The amount of storage reserved for Dali in gigabytes. Must be 10 or more. ***OPTIONAL, defaults to 250.*** |
+| `storage_data_gb` | number  | The amount of storage reserved for data in gigabytes. Must be 10 or more. ***OPTIONAL, defaults to 500.*** |
+| `storage_lz_gb` | number  | The amount of storage reserved for the landing zone in gigabytes. Must be 1 or more. ***OPTIONAL, defaults to 10.*** |
 
 ## Recommendations
 
@@ -77,6 +82,8 @@ The following options should be set in your `terraform.tfvars` file (or entered 
 * Do not use the same repo clone for different concurrent deployments.
 	* Terraform creates state files (*.tfstate) that represent what thinks reality is.  If you try to manage multiple storage accounts, Terraform will get confused.
 	* For each deployed storage account, re-clone the repo to a different directory on your local system.
+* The option `enable_premium_storage`, if true, creates a second Azure Storage Account in the same resource group.  This second storage account uses a different type of storage that is significantly faster but also more expensive, then creates a file share for Dali within it.  The result is a *much* snappier HPCC Systems cluster.  If you can afford it, we recommend using this option.
+   * Note that you will need to enable the `enable_premium_storage` option within the HPCC Systems Terraform module as well, in order to tell that module to look for this high-speed storage account.
 
 ## Useful Things
 

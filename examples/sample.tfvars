@@ -59,6 +59,15 @@ storage_data_gb=500
 
 #------------------------------------------------------------------------------
 
+# The amount of storage reserved for Dali in gigabytes.
+# Must be 10 or more.
+# OPTIONAL, defaults to 250.
+# Value type: number
+
+storage_dali_gb=250
+
+#------------------------------------------------------------------------------
+
 # Map of name => value tags that can will be associated with the cluster.
 # Format is '{"name"="value" [, "name"="value"]*}'.
 # The 'name' portion must be unique.
@@ -67,3 +76,10 @@ storage_data_gb=500
 # Value type: map of string
 
 extra_tags={}
+
+#------------------------------------------------------------------------------
+
+# If true, premium ($$$) storage will be created for the following storage shares: Dali.
+# OPTIONAL, defaults to false.
+
+enable_premium_storage=false

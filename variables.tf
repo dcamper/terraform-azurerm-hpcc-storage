@@ -3,24 +3,6 @@
 # if a .tfvars file is not supplied); there are no default values
 ###############################################################################
 
-variable "product_name" {
-  type        = string
-  description = "REQUIRED.  Abbreviated product name, suitable for use in Azure naming.\nMust be 2-23 characters in length, all lowercase or numeric characters.\nExample entry: myproduct"
-  validation {
-    condition     = length(regexall("^[a-z][a-z0-9]{1,22}$", var.product_name)) == 1
-    error_message = "Value must be 2-23 characters in length, all lowercase letters or numbers, no spaces."
-  }
-}
-
-variable "azure_region" {
-  type        = string
-  description = "REQUIRED.  The Azure region abbreviation in which to create these resources.\nMust be one of [\"eastus\", \"eastus2\", \"centralus\"].\nExample entry: eastus2"
-  validation {
-    condition     = contains(["eastus", "eastus2", "centralus"], var.azure_region)
-    error_message = "Value must be one of [\"eastus\", \"eastus2\", \"centralus\"]."
-  }
-}
-
 variable "admin_email" {
   type        = string
   description = "REQUIRED.  Email address of the administrator of this HPCC Systems cluster.\nExample entry: jane.doe@hpccsystems.com"
@@ -44,13 +26,43 @@ variable "admin_username" {
   }
 }
 
-variable "storage_lz_gb" {
-  type        = number
-  default     = 10
-  description = "OPTIONAL.  The amount of storage reserved for the landing zone in gigabytes.\nMust be 1 or more.\nOPTIONAL, defaults to 10."
+variable "azure_region" {
+  type        = string
+  description = "REQUIRED.  The Azure region abbreviation in which to create these resources.\nMust be one of [\"eastus\", \"eastus2\", \"centralus\"].\nExample entry: eastus2"
   validation {
-    condition     = var.storage_lz_gb >= 1
-    error_message = "Value must be 1 or more."
+    condition     = contains(["eastus", "eastus2", "centralus"], var.azure_region)
+    error_message = "Value must be one of [\"eastus\", \"eastus2\", \"centralus\"]."
+  }
+}
+
+variable "enable_premium_storage" {
+  description = "OPTIONAL.  If true, premium ($$$) storage will be created for the following storage shares: Dali.\nDefaults to false."
+  type        = bool
+  default     = false
+}
+
+variable "extra_tags" {
+  description = "OPTIONAL.  Map of name => value tags that can will be associated with the cluster.\nFormat is '{\"name\"=\"value\" [, \"name\"=\"value\"]*}'.\nThe 'name' portion must be unique.\nTo add no tags, enter '{}'."
+  type        = map(string)
+  default     = {}
+}
+
+variable "product_name" {
+  type        = string
+  description = "REQUIRED.  Abbreviated product name, suitable for use in Azure naming.\nMust be 2-23 characters in length, all lowercase or numeric characters.\nExample entry: myproduct"
+  validation {
+    condition     = length(regexall("^[a-z][a-z0-9]{1,22}$", var.product_name)) == 1
+    error_message = "Value must be 2-23 characters in length, all lowercase letters or numbers, no spaces."
+  }
+}
+
+variable "storage_dali_gb" {
+  type        = number
+  default     = 250
+  description = "OPTIONAL.  The amount of storage reserved for Dali in gigabytes.\nMust be 10 or more.\nOPTIONAL, defaults to 250."
+  validation {
+    condition     = var.storage_dali_gb >= 10
+    error_message = "Value must be 10 or more."
   }
 }
 
@@ -64,8 +76,12 @@ variable "storage_data_gb" {
   }
 }
 
-variable "extra_tags" {
-  description = "OPTIONAL.  Map of name => value tags that can will be associated with the cluster.\nFormat is '{\"name\"=\"value\" [, \"name\"=\"value\"]*}'.\nThe 'name' portion must be unique.\nTo add no tags, enter '{}'."
-  type        = map(string)
-  default     = {}
+variable "storage_lz_gb" {
+  type        = number
+  default     = 10
+  description = "OPTIONAL.  The amount of storage reserved for the landing zone in gigabytes.\nMust be 1 or more.\nOPTIONAL, defaults to 10."
+  validation {
+    condition     = var.storage_lz_gb >= 1
+    error_message = "Value must be 1 or more."
+  }
 }

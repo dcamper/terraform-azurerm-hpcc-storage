@@ -41,22 +41,59 @@ module "resource_group" {
   tags        = local.tags
 }
 
-resource "azurerm_storage_account" "storage_account" {
+resource "azurerm_storage_account" "standard_storage_account" {
 
-  name                     = lower("${var.admin_username}${local.metadata.product_name}sa")
-  resource_group_name      = module.resource_group.name
-  location                 = module.resource_group.location
-  account_tier             = local.storage.account_tier
-  account_replication_type = local.storage.account_replication_type
-  min_tls_version          = "TLS1_2"
-  tags                     = local.tags
+  name                             = local.storage.name
+  resource_group_name              = module.resource_group.name
+  location                         = module.resource_group.location
+  access_tier                      = local.storage.access_tier
+  account_kind                     = local.storage.account_kind
+  account_tier                     = local.storage.account_tier
+  account_replication_type         = local.storage.account_replication_type
+  cross_tenant_replication_enabled = false
+  shared_access_key_enabled        = true
+  min_tls_version                  = "TLS1_2"
+  large_file_share_enabled         = true
+  tags                             = local.tags
 }
 
-resource "azurerm_storage_share" "storage_shares" {
+resource "azurerm_storage_share" "standard_storage_shares" {
   for_each = local.storage.quotas
 
   name                 = each.key
-  storage_account_name = azurerm_storage_account.storage_account.name
+  storage_account_name = azurerm_storage_account.standard_storage_account.name
+  quota                = each.value
+
+  acl {
+    id = random_string.random.result
+
+    access_policy {
+      permissions = "rwdl"
+    }
+  }
+}
+
+resource "azurerm_storage_account" "premium_storage_account" {
+  count = var.enable_premium_storage ? 1 : 0
+
+  name                             = local.premium_storage.name
+  resource_group_name              = module.resource_group.name
+  location                         = module.resource_group.location
+  access_tier                      = local.premium_storage.access_tier
+  account_kind                     = local.premium_storage.account_kind
+  account_tier                     = local.premium_storage.account_tier
+  account_replication_type         = local.premium_storage.account_replication_type
+  cross_tenant_replication_enabled = false
+  shared_access_key_enabled        = true
+  min_tls_version                  = "TLS1_2"
+  tags                             = local.tags
+}
+
+resource "azurerm_storage_share" "premium_storage_shares" {
+  for_each = var.enable_premium_storage ? local.premium_storage.quotas : {}
+
+  name                 = each.key
+  storage_account_name = azurerm_storage_account.premium_storage_account[0].name
   quota                = each.value
 
   acl {

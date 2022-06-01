@@ -26,17 +26,28 @@ locals {
   #----------------------------------------------------------------------------
 
   storage = {
+    name                     = lower("${var.admin_username}${local.metadata.product_name}")
     access_tier              = "Hot"
     account_kind             = "StorageV2"
     account_tier             = "Standard"
     account_replication_type = "LRS"
 
     quotas = {
-      "dalishare" = 1000,
-      "dllsshare" = 100,
-      "sashashare" = 50,
-      "datashare" = var.storage_data_gb,
-      "lzshare" = var.storage_lz_gb
-    }
+	  "dalishare"  = var.storage_dali_gb
+	  "dllsshare"  = 100,
+	  "sashashare" = 50,
+	  "datashare"  = var.storage_data_gb,
+	  "lzshare"    = var.storage_lz_gb
+	}
+  }
+
+  premium_storage = {
+    name                     = lower("${var.admin_username}${local.metadata.product_name}premium")
+    access_tier              = "Hot"
+    account_kind             = "FileStorage"
+    account_tier             = "Premium"
+    account_replication_type = "LRS"
+
+    quotas = { "dalishare" = var.storage_dali_gb >= 100 ? var.storage_dali_gb : 100 }
   }
 }
