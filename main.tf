@@ -50,7 +50,6 @@ resource "azurerm_storage_account" "standard_storage_account" {
   account_kind                     = local.storage.account_kind
   account_tier                     = local.storage.account_tier
   account_replication_type         = local.storage.account_replication_type
-  cross_tenant_replication_enabled = false
   shared_access_key_enabled        = true
   min_tls_version                  = "TLS1_2"
   large_file_share_enabled         = true
@@ -83,7 +82,6 @@ resource "azurerm_storage_account" "premium_storage_account" {
   account_kind                     = local.premium_storage.account_kind
   account_tier                     = local.premium_storage.account_tier
   account_replication_type         = local.premium_storage.account_replication_type
-  cross_tenant_replication_enabled = false
   shared_access_key_enabled        = true
   min_tls_version                  = "TLS1_2"
   tags                             = local.tags
